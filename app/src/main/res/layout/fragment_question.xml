@@ -1,0 +1,50 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="com.jilin.test.QuestionFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="20dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp" >
+
+        <TextView
+            android:id="@+id/question_content_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="35dp"
+            android:lineSpacingMultiplier="1.2"
+            android:textColor="#656565"
+            android:textSize="16sp"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/answer_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"/>
+
+        <TextView
+            android:id="@+id/check_answer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="查看答案"
+            android:textSize="18sp"
+            android:textColor="#282828"
+            android:layout_marginTop="20dp"/>
+
+        <TextView
+            android:id="@+id/join_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="加入错题本"
+            android:textSize="18sp"
+            android:textColor="#282828"
+            android:layout_marginTop="20dp"/>
+    </LinearLayout>
+</ScrollView>
+
+
