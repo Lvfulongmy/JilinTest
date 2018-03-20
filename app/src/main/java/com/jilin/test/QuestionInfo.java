@@ -1,5 +1,7 @@
 package com.jilin.test;
 
+import org.litepal.crud.DataSupport;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -7,7 +9,7 @@ import java.util.List;
  * Created by Ruthout on 2017/8/31.
  */
 
-public class QuestionInfo implements Serializable {
+public class QuestionInfo extends DataSupport implements Serializable {
     private String question_title;
 
     private String question_type;

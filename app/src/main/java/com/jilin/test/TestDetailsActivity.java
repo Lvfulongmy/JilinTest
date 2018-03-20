@@ -17,6 +17,8 @@ import com.jilin.test.util.SPUtils;
 import com.jilin.test.util.ToastUtils;
 import com.jilin.test.util.rxbus.RxBus;
 
+import org.litepal.crud.DataSupport;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,9 +39,13 @@ public class TestDetailsActivity extends BaseToolbarActivity {
     protected ViewPager exam_pager;
     @Bind(R.id.exam_progress_text)
     protected TextView exam_progress_text;
+    @Bind(R.id.error_counts_text)
+    protected TextView error_counts_text;
     private QuestionAdapter mQuestionAdapter;
     private List<QuestionInfo> question_list = new ArrayList<>();
+    private List<QuestionInfo> error_question_list = new ArrayList<>();
     public static final String TAG = "TestDetailsActivity";
+    public static final String ERROR_TAG = "Error_TestDetailsActivity";
     private Observable<AnswerInfo> type;
     private int total;
 
@@ -54,6 +60,7 @@ public class TestDetailsActivity extends BaseToolbarActivity {
             }
         }
     };
+    private Observable<String> error_type;
 
     public static void startActivity(Context contenxt){
         Intent intent =new Intent(contenxt,TestDetailsActivity.class);
@@ -93,6 +100,8 @@ public class TestDetailsActivity extends BaseToolbarActivity {
 
     @Override
     protected void initData() {
+        error_question_list = DataSupport.select().find(QuestionInfo.class);
+        error_counts_text.setText(error_question_list.size()+"");
         type = RxBus.get().register(TAG,AnswerInfo.class);
         type.subscribe(answerInfo -> {
             if (answerInfo.getIs_right()) {
@@ -103,6 +112,11 @@ public class TestDetailsActivity extends BaseToolbarActivity {
                 return;
             }
             ToastUtils.showShort("错了");
+        });
+        error_type = RxBus.get().register(ERROR_TAG,String.class);
+        error_type.subscribe(answerInfo -> {
+            error_counts_text.setText((Integer.valueOf(error_counts_text.getText().toString())+1) +"");
+            ToastUtils.showShort("加入错题本");
         });
         try {
             InputStream in = getAssets().open("test.json");

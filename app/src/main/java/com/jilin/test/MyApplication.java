@@ -1,12 +1,12 @@
 package com.jilin.test;
 
-import android.app.Application;
+import org.litepal.LitePalApplication;
 
 
 /**
  * Created by ruthout on 2016/8/17.
  */
-public class MyApplication extends Application {
+public class MyApplication extends LitePalApplication {
 
     public static MyApplication mInstance;
 

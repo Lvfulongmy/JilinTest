@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.jilin.test.base.adapter.recycleview.CommonAdapter;
 import com.jilin.test.base.adapter.recycleview.MultiItemTypeAdapter;
 import com.jilin.test.base.adapter.recycleview.base.ViewHolder;
-import com.jilin.test.util.ToastUtils;
 import com.jilin.test.util.rxbus.RxBus;
 
 /**
@@ -119,7 +118,8 @@ public class QuestionFragment extends Fragment {
             answer_recycler.setVisibility(View.VISIBLE);
         });
         join_error.setOnClickListener(v -> {
-            ToastUtils.showShort("加入错题本");
+            mQuestionInfo.save();
+            RxBus.get().post(TestDetailsActivity.ERROR_TAG, "");
         });
 
     }
