@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.jilin.test.base.BaseToolbarActivity;
-import com.jilin.test.util.ToastUtils;
 
 import butterknife.Bind;
 
@@ -43,18 +42,17 @@ public class MainActivity extends BaseToolbarActivity {
     @Override
     protected void initListeners() {
         first_text.setOnClickListener(v ->{
-            TestDetailsActivity.startActivity(this);
+            TestDetailsActivity.startActivity(this,0,0);
         });
         second_text.setOnClickListener(v ->{
-            ToastUtils.showShort("2");
+            TestDetailsActivity.startActivity(this,1,0);
         });
         three_text.setOnClickListener(v ->{
-            ToastUtils.showShort("3");
+            TestDetailsActivity.startActivity(this,2,0);
         });
     }
 
     @Override
     protected void initData() {
-
     }
 }

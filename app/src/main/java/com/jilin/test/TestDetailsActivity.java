@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -61,10 +62,15 @@ public class TestDetailsActivity extends BaseToolbarActivity {
         }
     };
     private Observable<String> error_type;
+    private int parent_position;
+    private int isSql;
+    private String SP_TYPE = SPUtils.POSITION;
 
-    public static void startActivity(Context contenxt){
-        Intent intent =new Intent(contenxt,TestDetailsActivity.class);
-        contenxt.startActivity(intent);
+    public static void startActivity(Context context,int position,int isSql){
+        Intent intent =new Intent(context,TestDetailsActivity.class);
+        intent.putExtra("position",position);
+        intent.putExtra("isSql",isSql);
+        context.startActivity(intent);
     }
 
     @Override
@@ -74,6 +80,8 @@ public class TestDetailsActivity extends BaseToolbarActivity {
 
     @Override
     protected void initViews(Bundle savedInstanceState) {
+        parent_position = getIntent().getIntExtra("position",0);
+        isSql = getIntent().getIntExtra("isSql",0);
         initToolbar();
         mQuestionAdapter = new QuestionAdapter(getSupportFragmentManager());
         exam_pager.setAdapter(mQuestionAdapter);
@@ -84,7 +92,7 @@ public class TestDetailsActivity extends BaseToolbarActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("");
         mToolbar.setNavigationOnClickListener(v -> {
-            SPUtils.put_cache(this,SPUtils.POSITION,exam_pager.getCurrentItem());
+            SPUtils.put_cache(this,SP_TYPE,exam_pager.getCurrentItem());
             this.finish();
         });
         ActionBarHelper helper = createActionBarHelper();
@@ -95,7 +103,12 @@ public class TestDetailsActivity extends BaseToolbarActivity {
 
     @Override
     protected void initListeners() {
-
+        error_counts_text.setOnClickListener(v -> {
+            if (isSql == 1){
+                return;
+            }
+            TestDetailsActivity.startActivity(this,parent_position,1);
+        });
     }
 
     @Override
@@ -115,15 +128,41 @@ public class TestDetailsActivity extends BaseToolbarActivity {
         });
         error_type = RxBus.get().register(ERROR_TAG,String.class);
         error_type.subscribe(answerInfo -> {
-            error_counts_text.setText((Integer.valueOf(error_counts_text.getText().toString())+1) +"");
-            ToastUtils.showShort("加入错题本");
+            if (TextUtils.isEmpty(answerInfo)){
+                error_counts_text.setText((Integer.valueOf(error_counts_text.getText().toString())+1) +"");
+                ToastUtils.showShort("加入错题本");
+            } else {
+                error_counts_text.setText((Integer.valueOf(error_counts_text.getText().toString()) - 1) +"");
+            }
         });
         try {
-            InputStream in = getAssets().open("test.json");
-            ExamInfo anwerInfo = JSON.parseObject(inputStream2String(in), ExamInfo.class);
-            question_list.addAll(anwerInfo.getData().getQuestion_list());
-            int position = (int) SPUtils.get_cache(this,SPUtils.POSITION,0);
+            if (isSql == 0){
+                String file_name = "test.json";
+                switch (parent_position){
+                    case 0:
+                        file_name = "test.json";
+                        SP_TYPE = SPUtils.POSITION;
+                        break;
+                    case 1:
+                        file_name = "test.json";
+                        SP_TYPE = SPUtils.POSITION;
+                        break;
+                    case 2:
+                        file_name = "test.json";
+                        SP_TYPE = SPUtils.POSITION;
+                        break;
+                }
+                InputStream in = getAssets().open(file_name);
+                ExamInfo answerInfo = JSON.parseObject(inputStream2String(in), ExamInfo.class);
+                question_list.addAll(answerInfo.getData().getQuestion_list());
+                for (int i = 0; i < question_list.size(); i++) {
+                    question_list.get(i).setQuestion_type(parent_position+"");
+                }
+            } else {
+                question_list.addAll(DataSupport.select().where("question_type = ?", parent_position + "").find(QuestionInfo.class));
+            }
             mQuestionAdapter.notifyDataSetChanged();
+            int position = (int) SPUtils.get_cache(this,SP_TYPE,0);
             exam_pager.setCurrentItem(position , true);
             exam_progress_text.setText(total +  "/"  + question_list.size());
         } catch (IOException e) {
@@ -160,7 +199,7 @@ public class TestDetailsActivity extends BaseToolbarActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        SPUtils.put_cache(this,SPUtils.POSITION,exam_pager.getCurrentItem());
+        SPUtils.put_cache(this,SP_TYPE,exam_pager.getCurrentItem());
         RxBus.get().unregister(TAG,type);
     }
 }

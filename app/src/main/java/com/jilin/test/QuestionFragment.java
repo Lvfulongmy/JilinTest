@@ -16,6 +16,8 @@ import com.jilin.test.base.adapter.recycleview.MultiItemTypeAdapter;
 import com.jilin.test.base.adapter.recycleview.base.ViewHolder;
 import com.jilin.test.util.rxbus.RxBus;
 
+import org.litepal.crud.DataSupport;
+
 /**
  * a simple {@link Fragment} subclass.
  * Use the {@link QuestionFragment#newInstance} factory method to
@@ -105,6 +107,10 @@ public class QuestionFragment extends Fragment {
                         }
                     }
                     RxBus.get().post(TestDetailsActivity.TAG, answerInfo);
+                    if (DataSupport.select().where("question_title = ?", mQuestionInfo.getQuestion_title()).find(QuestionInfo.class).size() > 0){
+                        DataSupport.deleteAll(QuestionInfo.class, "question_title = ?", mQuestionInfo.getQuestion_title());
+                        RxBus.get().post(TestDetailsActivity.ERROR_TAG, "delete");
+                    }
                 }
             }
 
@@ -118,8 +124,10 @@ public class QuestionFragment extends Fragment {
             answer_recycler.setVisibility(View.VISIBLE);
         });
         join_error.setOnClickListener(v -> {
-            mQuestionInfo.save();
-            RxBus.get().post(TestDetailsActivity.ERROR_TAG, "");
+            if ( DataSupport.select().where("question_title = ?", mQuestionInfo.getQuestion_title()).find(QuestionInfo.class).size() <= 0 ){
+                mQuestionInfo.save();
+                RxBus.get().post(TestDetailsActivity.ERROR_TAG, "");
+            }
         });
 
     }
