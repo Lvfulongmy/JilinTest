@@ -114,7 +114,22 @@ public class TestDetailsActivity extends BaseToolbarActivity {
 
     @Override
     protected void initData() {
-        error_question_list = DataSupport.select().find(QuestionInfo.class);
+        String file_name = "test.json";
+        switch (parent_position){
+            case 0:
+                file_name = "test.json";
+                SP_TYPE = SPUtils.POSITION;
+                break;
+            case 1:
+                file_name = "security.json";
+                SP_TYPE = SPUtils.SECURITY_POSITION;
+                break;
+            case 2:
+                file_name = "test.json";
+                SP_TYPE = SPUtils.POSITION;
+                break;
+        }
+        error_question_list = DataSupport.where("question_type = ?",parent_position+"").select().find(QuestionInfo.class);
         error_counts_text.setText(error_question_list.size()+"");
         type = RxBus.get().register(TAG,AnswerInfo.class);
         type.subscribe(answerInfo -> {
@@ -138,21 +153,6 @@ public class TestDetailsActivity extends BaseToolbarActivity {
         });
         try {
             if (isSql == 0){
-                String file_name = "test.json";
-                switch (parent_position){
-                    case 0:
-                        file_name = "test.json";
-                        SP_TYPE = SPUtils.POSITION;
-                        break;
-                    case 1:
-                        file_name = "test.json";
-                        SP_TYPE = SPUtils.POSITION;
-                        break;
-                    case 2:
-                        file_name = "test.json";
-                        SP_TYPE = SPUtils.POSITION;
-                        break;
-                }
                 InputStream in = getAssets().open(file_name);
                 ExamInfo answerInfo = JSON.parseObject(inputStream2String(in), ExamInfo.class);
                 question_list.addAll(answerInfo.getData().getQuestion_list());
