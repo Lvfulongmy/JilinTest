@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -159,7 +160,12 @@ public class TestDetailsActivity extends BaseToolbarActivity {
                     question_list.get(i).setQuestion_type(parent_position+"");
                 }
             } else {
-                question_list.addAll(DataSupport.select().where("question_type = ?", parent_position + "").find(QuestionInfo.class));
+                question_list.addAll(DataSupport.select().where("question_type = ?",parent_position+"").find(QuestionInfo.class));
+                for (int i = 0; i < question_list.size(); i++) {
+                    question_list.get(i).getQuestion_answer().addAll(DataSupport.select().
+                            where("answer_title = ?",question_list.get(i).getQuestion_title()).find(AnswerInfo.class));
+                }
+                Log.e("TAG",question_list.get(0).getQuestion_answer().size() +"");
             }
             mQuestionAdapter.notifyDataSetChanged();
             int position = (int) SPUtils.get_cache(this,SP_TYPE,0);

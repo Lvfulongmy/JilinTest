@@ -125,6 +125,14 @@ public class QuestionFragment extends Fragment {
         });
         join_error.setOnClickListener(v -> {
             if ( DataSupport.select().where("question_title = ?", mQuestionInfo.getQuestion_title()).find(QuestionInfo.class).size() <= 0 ){
+                for (int i = 0; i < mQuestionInfo.getQuestion_answer().size(); i++) {
+                    AnswerInfo answerInfo = new AnswerInfo();
+                    answerInfo.setAnswer_title(mQuestionInfo.getQuestion_title());
+                    answerInfo.setOption_title(mQuestionInfo.getQuestion_answer().get(i).getOption_title());
+                    answerInfo.setOption(mQuestionInfo.getQuestion_answer().get(i).getOption());
+                    answerInfo.setIs_right(mQuestionInfo.getQuestion_answer().get(i).getIs_right());
+                    answerInfo.save();
+                }
                 mQuestionInfo.save();
                 RxBus.get().post(TestDetailsActivity.ERROR_TAG, "");
             }

@@ -3,6 +3,7 @@ package com.jilin.test;
 import org.litepal.crud.DataSupport;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ public class QuestionInfo extends DataSupport implements Serializable {
 
     private String question_score;
 
-    private List<AnswerInfo> question_answer;
+    private List<AnswerInfo> question_answer = new ArrayList<>();
 
     private boolean answering = true;
 

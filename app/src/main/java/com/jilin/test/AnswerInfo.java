@@ -1,12 +1,16 @@
 package com.jilin.test;
 
+import org.litepal.crud.DataSupport;
+
 import java.io.Serializable;
 
 /**
  * Created by Ruthout on 2017/8/31.
  */
 
-public class AnswerInfo implements Serializable {
+public class AnswerInfo extends DataSupport implements Serializable {
+    private String answer_title;
+
     private String option;
 
     private String option_title;
@@ -14,6 +18,14 @@ public class AnswerInfo implements Serializable {
     private boolean is_right;
 
     private int selected = -1;
+
+    public String getAnswer_title() {
+        return answer_title;
+    }
+
+    public void setAnswer_title(String answer_title) {
+        this.answer_title = answer_title;
+    }
 
     public int getSelected() {
         return selected;
